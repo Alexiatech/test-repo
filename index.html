@@ -1,152 +1,617 @@
-<title>Tic Tac Toe</title>
-<meta charset="UTF-8" />
-
-<style>
-  body,
-  td,
-  input {
-    font-size: 24px;
-    line-height: 1.5;
-    text-align: center;
-    font-family: system-ui, sans-serif;
-  }
-  td {
-    height: 3rem;
-    width: 3rem;
-    text-align: center;
-  }
-  table {
-    margin: 5rem auto;
-  }
-  @media (prefers-color-scheme: dark) {
-    body,
-    input {
-      background: #222;
-      color: #ccc;
-    }
-  }
-</style>
-
-<h1>Tic Tac Toe</h1>
-
-<table>
-  <tr>
-    <td><input type="checkbox" /></td>
-    <td><input type="checkbox" /></td>
-    <td><input type="checkbox" /></td>
-  </tr>
-  <tr>
-    <td><input type="checkbox" /></td>
-    <td><input type="checkbox" /></td>
-    <td><input type="checkbox" /></td>
-  </tr>
-  <tr>
-    <td><input type="checkbox" /></td>
-    <td><input type="checkbox" /></td>
-    <td><input type="checkbox" /></td>
-  </tr>
-</table>
-
-<h2 hidden>Game over, refresh to play again 🧑‍💻 🤖!</h2>
-
-<script>
-  // Initialization
-  const boxes = Array.from(document.querySelectorAll('td'))
-  const inputs = Array.from(document.querySelectorAll('[type=checkbox]'))
-  const rows = [1, 2, 3].map((n) =>
-    Array.from(document.querySelectorAll(`tr:nth-child(${n}) td`))
-  )
-  const columns = [1, 2, 3].map((n) =>
-    Array.from(document.querySelectorAll(`td:nth-child(${n})`))
-  )
-  const diagonals = [
-    [
-      [1, 1],
-      [2, 2],
-      [3, 3],
-    ],
-    [
-      [3, 1],
-      [2, 2],
-      [1, 3],
-    ],
-  ].map((set) =>
-    set.map(([x, y]) =>
-      document.querySelector(`tr:nth-child(${x}) td:nth-child(${y})`)
-    )
-  )
-  const gameOver = document.querySelector('h2')
-  const HUMAN = '🧑‍💻'
-  const ROBOT = '🤖'
-
-  // Decide who goes first
-  if (Math.random() > 0.5) {
-    runRobotTurn()
-  }
-
-  // Handle when a user clicks an input
-  for (const input of inputs) {
-    input.addEventListener('click', handleClickInput)
-  }
-
-  // The user chose a box, check for win, robot turn, check for win
-  function handleClickInput(evt) {
-    evt.target.closest('td').innerHTML = HUMAN
-    if (hasWin()) {
-      return endGame()
-    }
-    runRobotTurn()
-    if (hasWin()) {
-      return endGame()
-    }
-  }
-
-  // Choose a random available box
-  function runRobotTurn() {
-    const robotBoxes = shuffle(boxes)
-    while (robotBoxes.length) {
-      const box = robotBoxes.shift()
-      if (box.querySelector('input')) {
-        box.innerHTML = ROBOT
-        break
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Han Nguyen · Creative Developer Portfolio</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #f4ebe1;
+        --green-dark: #1f2b1c;
+        --green: #374b32;
+        --olive: #5b704f;
+        --gold: #c29b2b;
+        --orange: #e28364;
+        --cream: #fff7ed;
+        --text: #222222;
+        --muted: #615d57;
+        font-size: 16px;
       }
-    }
-  }
 
-  // Determine win
-  function hasWin() {
-    return (
-      rows.some(hasAllSame) ||
-      columns.some(hasAllSame) ||
-      diagonals.some(hasAllSame)
-    )
-  }
+      * {
+        box-sizing: border-box;
+      }
 
-  // Determine if every cell matches
-  function hasAllSame(arr) {
-    return arr.every(
-      (td) => !td.querySelector('input') && td.innerHTML === arr[0].innerHTML
-    )
-  }
+      body {
+        margin: 0;
+        font-family: "Manrope", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        color: var(--text);
+        background: var(--bg);
+      }
 
-  // Display game over, cancel events
-  function endGame() {
-    gameOver.hidden = false
-    for (const input of inputs) {
-      input.removeEventListener('click', handleClickInput)
-      input.remove()
-    }
-  }
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2.5rem 1.5rem 4rem;
+        position: relative;
+      }
 
-  // Shuffle a copy of the input array
-  function shuffle(array) {
-    array = array.slice(0)
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * i)
-      const temp = array[i]
-      array[i] = array[j]
-      array[j] = temp
-    }
-    return array
-  }
-</script>
+      .rounded-shell {
+        background: var(--cream);
+        border-radius: 48px;
+        padding: 2.5rem;
+        box-shadow: 0 25px 60px rgba(19, 31, 23, 0.13);
+        position: relative;
+        overflow: hidden;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 3rem;
+        gap: 1rem;
+      }
+
+      header .brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 600;
+        color: var(--green-dark);
+      }
+
+      header .brand span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: var(--orange);
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 1px;
+      }
+
+      nav ul {
+        display: flex;
+        gap: 1.5rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        font-size: 0.95rem;
+      }
+
+      nav a {
+        text-decoration: none;
+        color: var(--green);
+        font-weight: 600;
+        position: relative;
+      }
+
+      nav a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -0.2rem;
+        width: 100%;
+        height: 2px;
+        background: var(--gold);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.2s ease;
+      }
+
+      nav a:hover::after {
+        transform: scaleX(1);
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 2rem;
+        align-items: center;
+        position: relative;
+      }
+
+      .hero-title {
+        grid-column: 1 / span 7;
+        position: relative;
+      }
+
+      .hero-title h1 {
+        margin: 0;
+        font-family: "Playfair Display", serif;
+        font-size: clamp(2.5rem, 8vw, 5.5rem);
+        line-height: 0.95;
+        text-transform: uppercase;
+        color: var(--green-dark);
+        letter-spacing: 0.08em;
+      }
+
+      .hero-title h1 span {
+        display: block;
+        color: var(--orange);
+        font-size: 0.85em;
+      }
+
+      .hero-bio {
+        grid-column: 1 / span 5;
+        background: var(--green-dark);
+        color: #fff;
+        padding: 2rem;
+        border-radius: 28px;
+        display: grid;
+        gap: 1.25rem;
+        margin-top: 2rem;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero-bio h2 {
+        margin: 0;
+        font-family: "Playfair Display", serif;
+        font-size: 2rem;
+      }
+
+      .hero-bio p {
+        margin: 0;
+        color: rgba(255, 255, 255, 0.84);
+        line-height: 1.6;
+      }
+
+      .hero-bio .cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--orange);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 999px;
+        box-shadow: 0 10px 20px rgba(226, 131, 100, 0.3);
+        transition: transform 0.2s ease;
+      }
+
+      .hero-bio .cta:hover {
+        transform: translateY(-2px);
+      }
+
+      .portrait-card {
+        grid-column: 8 / span 5;
+        background: var(--gold);
+        border-radius: 32px;
+        padding: 2rem;
+        position: relative;
+        text-align: center;
+        color: var(--green-dark);
+        overflow: hidden;
+      }
+
+      .portrait-card::before,
+      .portrait-card::after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.35);
+      }
+
+      .portrait-card::before {
+        width: 180px;
+        height: 180px;
+        top: -70px;
+        right: -50px;
+      }
+
+      .portrait-card::after {
+        width: 260px;
+        height: 260px;
+        bottom: -150px;
+        left: -90px;
+      }
+
+      .portrait-card img {
+        width: 220px;
+        height: 220px;
+        border-radius: 40px;
+        object-fit: cover;
+        border: 6px solid var(--cream);
+        position: relative;
+        z-index: 1;
+        margin-bottom: 1.5rem;
+      }
+
+      .portrait-card h3 {
+        margin: 0;
+        font-family: "Playfair Display", serif;
+        font-size: 1.6rem;
+      }
+
+      .portrait-card p {
+        margin: 0.75rem 0 0;
+        color: rgba(31, 43, 28, 0.8);
+      }
+
+      .badge-row {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 1.5rem;
+        font-size: 0.9rem;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .badge-row span {
+        padding: 0.35rem 0.9rem;
+        border-radius: 999px;
+        background: rgba(255, 247, 237, 0.8);
+        color: var(--green-dark);
+        font-weight: 600;
+      }
+
+      .content-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1.8rem;
+        margin-top: 3.5rem;
+      }
+
+      .card {
+        border-radius: 28px;
+        padding: 2rem;
+        background: #fff;
+        box-shadow: 0 18px 40px rgba(41, 56, 38, 0.08);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        border: 1px solid rgba(31, 43, 28, 0.06);
+        pointer-events: none;
+      }
+
+      .card h3 {
+        margin: 0;
+        font-family: "Playfair Display", serif;
+        font-size: 1.7rem;
+        color: var(--green-dark);
+        margin-bottom: 1.25rem;
+      }
+
+      .card ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 1rem;
+        color: var(--muted);
+      }
+
+      .card li strong {
+        display: block;
+        color: var(--text);
+        font-weight: 700;
+      }
+
+      .education {
+        grid-column: span 6;
+        background: var(--green);
+        color: #fff;
+      }
+
+      .education ul,
+      .education li strong {
+        color: rgba(255, 255, 255, 0.88);
+      }
+
+      .education li span {
+        color: rgba(255, 255, 255, 0.64);
+      }
+
+      .experience {
+        grid-column: span 6;
+      }
+
+      .skills {
+        grid-column: span 4;
+        background: var(--gold);
+        color: var(--green-dark);
+      }
+
+      .skills ul {
+        color: rgba(31, 43, 28, 0.8);
+      }
+
+      .languages {
+        grid-column: span 4;
+      }
+
+      .hobbies {
+        grid-column: span 4;
+      }
+
+      .activities {
+        grid-column: span 12;
+        display: grid;
+        gap: 1rem;
+        background: var(--green-dark);
+        color: #fff;
+      }
+
+      .activities a {
+        align-self: start;
+        justify-self: start;
+        background: #fff7ed;
+        color: var(--green-dark);
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 999px;
+        font-weight: 600;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+        transition: transform 0.2s ease;
+      }
+
+      .activities a:hover {
+        transform: translateY(-2px);
+      }
+
+      .accent-corner {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(circle at top right, var(--orange), transparent);
+        top: -20px;
+        left: -20px;
+        border-radius: 0 0 120px 0;
+      }
+
+      footer {
+        margin-top: 3rem;
+        text-align: center;
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      @media (max-width: 960px) {
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .hero {
+          grid-template-columns: repeat(6, 1fr);
+        }
+
+        .hero-title {
+          grid-column: 1 / -1;
+        }
+
+        .hero-bio {
+          grid-column: 1 / -1;
+        }
+
+        .portrait-card {
+          grid-column: 1 / -1;
+          justify-self: center;
+          width: min(100%, 400px);
+        }
+
+        .content-grid {
+          grid-template-columns: repeat(6, 1fr);
+        }
+
+        .education,
+        .experience {
+          grid-column: span 6;
+        }
+
+        .skills,
+        .languages,
+        .hobbies {
+          grid-column: span 3;
+        }
+
+        .activities {
+          grid-column: span 6;
+        }
+      }
+
+      @media (max-width: 720px) {
+        .page {
+          padding: 2rem 1rem 3rem;
+        }
+
+        .rounded-shell {
+          padding: 2rem 1.5rem 3rem;
+        }
+
+        nav ul {
+          flex-wrap: wrap;
+        }
+
+        .hero-title h1 {
+          font-size: clamp(2.8rem, 10vw, 4rem);
+        }
+
+        .content-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .education,
+        .experience,
+        .skills,
+        .languages,
+        .hobbies,
+        .activities {
+          grid-column: span 2;
+        }
+
+        .skills,
+        .languages,
+        .hobbies {
+          min-height: auto;
+        }
+      }
+
+      @media (max-width: 520px) {
+        header {
+          align-items: center;
+        }
+
+        .hero-bio {
+          padding: 1.75rem;
+        }
+
+        .portrait-card img {
+          width: 180px;
+          height: 180px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <div class="rounded-shell">
+        <div class="accent-corner" aria-hidden="true"></div>
+        <header>
+          <div class="brand"><span>HN</span> Han Nguyen</div>
+          <nav aria-label="Primary">
+            <ul>
+              <li><a href="#about">About me</a></li>
+              <li><a href="#experience">Experience</a></li>
+              <li><a href="#skills">Skills</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </nav>
+        </header>
+
+        <section class="hero" id="about">
+          <div class="hero-title">
+            <h1>
+              Portfolio
+              <span>Creative Developer &amp; UI Art Director</span>
+            </h1>
+          </div>
+
+          <article class="hero-bio">
+            <h2>Hello, I'm Han!</h2>
+            <p>
+              Multidisciplinary creative developer with a soft spot for visual
+              storytelling and playful interactions. I help brands craft
+              captivating digital narratives across immersive web experiences.
+            </p>
+            <a class="cta" href="mailto:han.nguyen@example.com">Let's work together</a>
+          </article>
+
+          <aside class="portrait-card" id="contact">
+            <img
+              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80"
+              alt="Portrait of Han Nguyen"
+            />
+            <h3>Han Nguyen</h3>
+            <p>Based in Rotterdam · Available for freelance projects</p>
+            <div class="badge-row">
+              <span>Brand design</span>
+              <span>Immersive web</span>
+              <span>Creative coding</span>
+            </div>
+          </aside>
+        </section>
+
+        <section class="content-grid">
+          <article class="card education">
+            <h3>Education</h3>
+            <ul>
+              <li>
+                <strong>2022 · MA Digital Experience Design</strong>
+                <span>ArtEZ University of the Arts · Arnhem</span>
+              </li>
+              <li>
+                <strong>2018 · BA Graphic &amp; Media Design</strong>
+                <span>Willem de Kooning Academy · Rotterdam</span>
+              </li>
+              <li>
+                <strong>2016 · Exchange Programme</strong>
+                <span>School of Visual Arts · New York</span>
+              </li>
+            </ul>
+          </article>
+
+          <article class="card experience" id="experience">
+            <h3>Experience</h3>
+            <ul>
+              <li>
+                <strong>2023 – Present · Creative Developer</strong>
+                <span>Studio Sunbeam · Amsterdam</span>
+              </li>
+              <li>
+                <strong>2020 – 2023 · Visual Designer</strong>
+                <span>Pixel Bloom · Utrecht</span>
+              </li>
+              <li>
+                <strong>2018 – 2020 · Design Intern</strong>
+                <span>Wonderland Agency · Rotterdam</span>
+              </li>
+            </ul>
+          </article>
+
+          <article class="card skills" id="skills">
+            <h3>Technical skills</h3>
+            <ul>
+              <li><strong>Creative Dev:</strong> WebGL, Three.js, GSAP</li>
+              <li><strong>Frontend:</strong> HTML, CSS, Typescript, React</li>
+              <li><strong>Design:</strong> Figma, After Effects, Cinema 4D</li>
+            </ul>
+          </article>
+
+          <article class="card languages">
+            <h3>Languages</h3>
+            <ul>
+              <li><strong>English</strong> · Professional working proficiency</li>
+              <li><strong>Dutch</strong> · Native speaker</li>
+              <li><strong>Vietnamese</strong> · Conversational</li>
+            </ul>
+          </article>
+
+          <article class="card hobbies">
+            <h3>Hobbies &amp; interests</h3>
+            <ul>
+              <li><strong>Analog photography</strong> · Documenting urban stories</li>
+              <li><strong>Jazz piano</strong> · Weekly sessions with local band</li>
+              <li><strong>Illustration</strong> · Experimental risograph prints</li>
+            </ul>
+          </article>
+
+          <article class="card activities">
+            <h3>Activities</h3>
+            <p>
+              Hosting monthly creative coding meetups and mentoring young
+              designers exploring motion for the web. My recent project "Scenic
+              Journeys" won the 2023 Dutch Design Awards interactive category.
+            </p>
+            <a href="https://behance.net" target="_blank" rel="noreferrer">
+              View latest case study
+            </a>
+          </article>
+        </section>
+
+        <footer>
+          © 2024 Han Nguyen. Crafted with care in Rotterdam.
+        </footer>
+      </div>
+    </main>
+  </body>
+</html>
